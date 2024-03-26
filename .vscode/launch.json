@@ -8,7 +8,9 @@
       "skipFiles": ["<node_internals>/**"],
       "program": "${file}",
       "runtimeExecutable": "/home/slx/works/webreader-sync-remote/.shells/node_modules/.bin/zx",
-      "args": [],
+      "args": [
+        "backup/dataBackup.yml"
+      ],
     },
   ]
 }

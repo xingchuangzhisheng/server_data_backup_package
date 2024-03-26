@@ -24,9 +24,30 @@ const log = {
 const cwd = process.cwd();
 
 const ArchiveFormat = {
-  ZIP: "zip",
-  TAR: "tar",
-  TAR_GZ: "tar.gz",
+  ZIP: ".zip",
+  TAR: ".tar",
+  TAR_GZ: ".tar.gz",
+};
+
+const archiveFormatHandle = {
+  [ArchiveFormat.ZIP]: async (
+    nodeFilename,
+    paths,
+    config,
+    globalArchiveConfig
+  ) => {
+    config.archive = config.archive || {};
+    const enableEncrypt =
+      config.archive.enableEncrypt ||
+      globalArchiveConfig.enableEncrypt ||
+      false;
+    const password = config.archive.password || globalArchiveConfig.password || "";
+    if (enableEncrypt && typeof password === "string" && password.length > 0) {
+      await $`zip -q -P ${password} -r ${nodeFilename} ${paths}`;
+    } else {
+      await $`zip -q -r ${nodeFilename} ${paths}`;
+    }
+  },
 };
 
 /**
@@ -49,6 +70,14 @@ function renderStr(str) {
 }
 
 async function handleBackupNode(globalArchive, nodeFilename, nodeConfig) {
+  const formatSuffix = nodeConfig.format || globalArchive.format;
+  const archiveHandle = archiveFormatHandle[formatSuffix];
+  if (typeof archiveHandle !== "function") {
+    throw `不支持的归档格式: ${format}`;
+  }
+
+  nodeFilename = nodeFilename + formatSuffix;
+
   const tmpStorageDir = nodeFilename + ".tmp";
   await $`mkdir -p ${tmpStorageDir}`;
 
@@ -84,9 +113,9 @@ async function handleBackupNode(globalArchive, nodeFilename, nodeConfig) {
 
     cd(tmpStorageDir);
 
-    await $`zip -r ${nodeFilename}.zip ${paths}`;
+    await archiveHandle(nodeFilename, paths, nodeConfig, globalArchive);
   } catch (e) {
-    await $`rm -rf ${nodeFilename}.zip`;
+    await $`rm -rf ${nodeFilename}.`;
     throw `备份节点失败: ${e}`;
   } finally {
     cd(cwd);
