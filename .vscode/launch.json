@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "测试zx脚本",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${file}",
+      "runtimeExecutable": "/home/slx/works/webreader-sync-remote/.shells/node_modules/.bin/zx",
+      "args": [],
+    },
+  ]
+}
