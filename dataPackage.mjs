@@ -36,12 +36,12 @@ const archiveFormatHandle = {
     config,
     globalArchiveConfig
   ) => {
-    config.archive = config.archive || {};
     const enableEncrypt =
       config.archive.enableEncrypt ||
       globalArchiveConfig.enableEncrypt ||
       false;
-    const password = config.archive.password || globalArchiveConfig.password || "";
+    const password =
+      config.archive.password || globalArchiveConfig.password || "";
     if (enableEncrypt && typeof password === "string" && password.length > 0) {
       await $`zip -q -P ${password} -r ${nodeFilename} ${paths}`;
     } else {
@@ -70,10 +70,10 @@ function renderStr(str) {
 }
 
 async function handleBackupNode(globalArchive, nodeFilename, nodeConfig) {
-  const formatSuffix = nodeConfig.format || globalArchive.format;
+  const formatSuffix = nodeConfig.archive.format || globalArchive.format;
   const archiveHandle = archiveFormatHandle[formatSuffix];
   if (typeof archiveHandle !== "function") {
-    throw `不支持的归档格式: ${format}`;
+    throw `不支持的归档格式: ${formatSuffix}`;
   }
 
   nodeFilename = nodeFilename + formatSuffix;
@@ -161,6 +161,7 @@ async function main(args) {
 
   for (const nodeName of backupKeys) {
     const nodeConfig = backupNodes[nodeName];
+    nodeConfig.archive = nodeConfig.archive || {};
     log.info(`开始备份节点: ${nodeName}`);
 
     const nodeFilepath = path.resolve(
@@ -169,7 +170,7 @@ async function main(args) {
     );
 
     if (!nodeFilepath.startsWith(globalArchive.targetDir)) {
-      throw `节点备份路径不允许超出全局备份路径: ${nodeFilepath}`;
+      throw `节点备份路径{ ${nodeFilepath} }不允许超出全局备份路径: ${globalArchive.targetDir}`;
     }
 
     await $`mkdir -p ${path.dirname(nodeFilepath)}`;
