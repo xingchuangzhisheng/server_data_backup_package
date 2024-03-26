@@ -2,16 +2,13 @@
 backup:
   photoPrims:
     # 所在目录
-    dir: /home/slx/applications/21-photoprism
-    # 本地物理路径
+    dir:
+    # 本地物理路径，可以是多个，也可以是单个，如果需要别名用:分割
     path:
-      - pictures:Pictures
-      - storage
-    desc: PhotoPrism数据
     # 归档信息， 如果此处没写则读全局的
     archive:
       # 归档类别, 目前支持tar.gz、tar、zip三种
-      format: tar.gz
+      format: zip
 
 # 归档信息
 archive:
