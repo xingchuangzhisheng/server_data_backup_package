@@ -11,7 +11,7 @@ sorted_files=$(ls -1 "$directory" | sort)
 num_files=$(echo "$sorted_files" | wc -l)
 
 # Calculate the number of files and directories to keep
-num_to_keep=3
+num_to_keep=30
 
 # Calculate the number of files and directories to delete
 num_to_delete=$((num_files - num_to_keep))

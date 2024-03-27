@@ -180,6 +180,7 @@ async function main(args) {
 
 try {
   await main(process.argv.slice(3));
+  log.success("备份文件打包完成!");
 } catch (e) {
   log.error(e);
   process.exit(-1);
